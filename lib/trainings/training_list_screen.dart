@@ -1,3 +1,4 @@
+import 'package:auzmor_assignment/common/config/constants.dart';
 import 'package:auzmor_assignment/common/models/training_session_model.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_bloc.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_event.dart';
@@ -62,7 +63,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
 
     return Container(
       color: Colors.red,
-      height: height * 0.47,
+      height: height * 0.49,
       child: Stack(
         children: [
           // Background
@@ -141,14 +142,17 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                             ),
                             child: Stack(
                               children: [
-                                InkWell(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(6),
-                                      child: Image.network(
-                                        trainingSessionsData.imageUrl,
-                                        fit: BoxFit.cover,
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(6),
+                                    child: FadeInImage.assetNetwork(
+                                      placeholder:
+                                          AppConstants.kPlaceHolderImagePath,
+                                      image: trainingSessionsData.imageUrl,
+                                      fit: BoxFit.cover,
+                                      fadeInDuration: const Duration(
+                                        milliseconds: 300,
                                       ),
                                     ),
                                   ),
@@ -275,7 +279,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                           ),
                           child: InkWell(
                             onTap: () {
-                              // Open a filer model
+                              _showFilterBottomSheet();
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -475,6 +479,80 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
+      ),
+      builder: (ctx) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Filters",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                        const Spacer(),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        height: 400,
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        color: Colors.red,
+                      ),
+                      Expanded(
+                        child: Container(
+                          height: 400,
+                          color: Colors.amber,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
