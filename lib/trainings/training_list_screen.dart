@@ -24,19 +24,25 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
             BlocProvider.of<TrainingBloc>(context);
 
         if (state is InitialTraningState) {
-          _fetchTrainingSessionsData(
+          fetchTrainingSessionsData(
             trainingBloc: trainingBloc,
           );
         }
 
         return Scaffold(
           backgroundColor: Colors.grey[200],
-          body: Column(
-            children: [
-              _buildHighLightsTrainingCarousel(trainingBloc: trainingBloc),
-              (state is LoadingTraningState)
-                  ? const Center(child: CircularProgressIndicator())
-                  : Flexible(
+          body: (state is LoadingTraningState)
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.red,
+                  ),
+                )
+              : Column(
+                  children: [
+                    if (state is LoadedTraningState)
+                      _buildHighLightsTrainingCarousel(
+                          trainingBloc: trainingBloc),
+                    Flexible(
                       child: ListView.builder(
                         padding: const EdgeInsets.all(15),
                         itemCount: trainingBloc.trainingSessionsDataList.length,
@@ -49,8 +55,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                         },
                       ),
                     ),
-            ],
-          ),
+                  ],
+                ),
         );
       },
     );
@@ -87,7 +93,6 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
           // Top Content
           Padding(
             padding: EdgeInsets.only(
-              // TODO : android
               top: MediaQuery.of(context).padding.top + 10,
             ),
             child: Column(
@@ -127,7 +132,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     enlargeCenterPage: true,
                     enlargeStrategy: CenterPageEnlargeStrategy.zoom,
                   ),
-                  items: trainingBloc.trainingSessionsDataList.map(
+                  items: trainingBloc.highlightedTrainingSessionList.map(
                     (trainingSessionsData) {
                       return Builder(
                         builder: (BuildContext context) {
@@ -279,7 +284,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                           ),
                           child: InkWell(
                             onTap: () {
-                              _showFilterBottomSheet();
+                              _showFilterBottomSheet(
+                                  trainingBloc: trainingBloc);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -482,86 +488,260 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
     );
   }
 
-  void _showFilterBottomSheet() {
+  void _showFilterBottomSheet({
+    required TrainingBloc trainingBloc,
+  }) {
+    String selectedFilter = ("Trainer");
+
+    final List<String> filterTypes = ["Trainer", "Location", "Training Type"];
+
+    BorderRadiusGeometry borderRadius = const BorderRadius.only(
+      topLeft: Radius.circular(12),
+      topRight: Radius.circular(12),
+    );
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-        ),
-      ),
-      builder: (ctx) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-            ),
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Filters",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[800],
-                          ),
+      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, changeState) {
+            final List<String> filterData = (selectedFilter == "Trainer")
+                ? trainingBloc.trainerNames
+                : (selectedFilter == "Location")
+                    ? trainingBloc.locations
+                    : trainingBloc.trainingCategory;
+
+            final double width = MediaQuery.of(context).size.width;
+
+            return Container(
+              width: width,
+              decoration: BoxDecoration(borderRadius: borderRadius),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Top Bar
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              ("Select Filters"),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const Spacer(),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ],
                         ),
-                        const Spacer(),
-                        InkWell(
-                          onTap: () {
+                      ),
+                      // Filter Types
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            children: [
+                              ...filterTypes.map(
+                                (type) {
+                                  return buildfilterTypeChip(
+                                    label: type,
+                                    isSeleted: (selectedFilter == type),
+                                    onTap: () {
+                                      selectedFilter = type;
+                                      changeState(() {});
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          // Filter Data
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: filterData.map(
+                                (value) {
+                                  final String filterKey = selectedFilter
+                                      .toLowerCase()
+                                      .replaceAll(' ', '_');
+
+                                  final bool isSelected = trainingBloc
+                                          .filterData[filterKey]
+                                          .contains(value) ??
+                                      false;
+
+                                  return buildFilterOptions(
+                                    label: value,
+                                    isSelected: isSelected,
+                                    filterType: selectedFilter,
+                                    onChanged: (newValue) {
+                                      if (newValue == true) {
+                                        if (!trainingBloc.filterData[filterKey]
+                                            .contains(value)) {
+                                          trainingBloc.filterData[filterKey]
+                                              .add(value);
+                                        }
+                                      } else {
+                                        trainingBloc.filterData[filterKey]
+                                            .remove(value);
+                                      }
+
+                                      changeState(() {});
+                                    },
+                                  );
+                                },
+                              ).toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Apply Filter Button
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20,
+                          top: 20,
+                          right: 20,
+                          bottom: 25,
+                        ),
+                        child: MaterialButton(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                          ),
+                          color: Colors.red,
+                          minWidth: double.infinity,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          onPressed: () {
+                            fetchTrainingSessionsData(
+                              isFilter: true,
+                              trainingBloc: trainingBloc,
+                            );
+
                             Navigator.of(context).pop();
                           },
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.grey[800],
+                          child: const Text(
+                            ("Apply"),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        height: 400,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        color: Colors.red,
                       ),
-                      Expanded(
-                        child: Container(
-                          height: 400,
-                          color: Colors.amber,
-                        ),
-                      )
                     ],
-                  ),
-                ],
-              );
-            },
-          ),
+                  );
+                },
+              ),
+            );
+          },
         );
       },
     );
   }
 
-  void _fetchTrainingSessionsData({
+  Widget buildfilterTypeChip({
+    required String label,
+    required bool isSeleted,
+    required void Function() onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 60,
+        width: (MediaQuery.of(context).size.width * 0.38),
+        color: (!isSeleted ? Colors.grey[300] : null),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if (isSeleted)
+              Container(
+                height: 60,
+                width: 5,
+                color: Colors.red,
+              ),
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: (isSeleted ? Colors.black : Colors.black),
+                    fontWeight: (isSeleted ? FontWeight.w600 : FontWeight.w400),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildFilterOptions({
+    required String filterType,
+    required String label,
+    required bool isSelected,
+    required void Function(bool?) onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 5,
+        horizontal: 10,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Checkbox(
+            value: isSelected,
+            onChanged: onChanged,
+            activeColor: Colors.red,
+            checkColor: Colors.white,
+            side: const BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void fetchTrainingSessionsData({
+    bool isFilter = false,
     required TrainingBloc trainingBloc,
   }) {
     trainingBloc.add(
       FetchTrainingSessionData(
         context: context,
+        isFilter: isFilter,
       ),
     );
   }

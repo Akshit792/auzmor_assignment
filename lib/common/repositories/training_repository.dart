@@ -7,7 +7,7 @@ import 'package:auzmor_assignment/common/models/training_session_model.dart';
 class TrainingRepository {
   Future<List<TrainingSessionModel>> fetchSessions() async {
     await Future.delayed(
-      const Duration(seconds: 2),
+      const Duration(seconds: 1),
     );
 
     final String response = await rootBundle.loadString(
@@ -21,22 +21,3 @@ class TrainingRepository {
         .toList();
   }
 }
-
-
-
-// Future<List<TrainingSessionModel>> getAllSessions() async {
-  //   return await _fetchSessions();
-  // }
-
-  // Future<List<TrainingSessionModel>> getFeaturedSessions() async {
-  //   final sessions = await _fetchSessions();
-  //   return sessions.where((session) => session.isFeatured).toList();
-  // }
-
-  // Future<List<TrainingSessionModel>> getSessionsByCategory(String category) async {
-  //   final sessions = await _fetchSessions();
-  //   return sessions.where((session) => session.category == category).toList();
-  // }
-
-  // all training page 
-  // training details page

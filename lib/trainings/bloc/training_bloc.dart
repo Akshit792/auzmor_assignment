@@ -9,6 +9,42 @@ import 'package:intl/intl.dart';
 class TrainingBloc extends Bloc<TrainingEvent, TrainingState> {
   List<TrainingSessionModel> trainingSessionsDataList = [];
 
+  List<TrainingSessionModel> highlightedTrainingSessionList = [];
+
+  final List<String> trainerNames = [
+    "Mark Hamilton",
+    "Sarah Johnson",
+    "Anna Lee",
+    "Michael Rodriguez",
+    "Laura Simmons",
+  ];
+
+  final List<String> trainingCategory = [
+    "Leadership",
+    "Human Resources",
+    "Project Management",
+    "Communication",
+    "Team Management",
+  ];
+
+  final List<String> locations = [
+    "New York, ZK",
+    "Chicago, IL",
+    "Phoenix, AZ",
+    "San Francisco, CA",
+    "Dallas, TX",
+    "West Des Moines",
+    "San Diego, CA",
+    "Boston, MA",
+    "Houston, TX",
+  ];
+
+  final Map filterData = {
+    "location": [],
+    "trainer": [],
+    "training_type": [],
+  };
+
   TrainingBloc() : super(InitialTraningState()) {
     on<FetchTrainingSessionData>(
       (event, emit) async {
@@ -21,6 +57,29 @@ class TrainingBloc extends Bloc<TrainingEvent, TrainingState> {
 
           trainingSessionsDataList = await trainingRepository.fetchSessions();
 
+          highlightedTrainingSessionList = trainingSessionsDataList
+              .where((session) => session.isFeatured)
+              .toList();
+
+          if (event.isFilter) {
+            trainingSessionsDataList =
+                trainingSessionsDataList.where((session) {
+              final isLocationMatch = filterData['location']!.isEmpty
+                  ? true
+                  : filterData['location']?.contains(session.location) ?? false;
+              final isTrainerMatch = filterData['trainer']!.isEmpty
+                  ? true
+                  : filterData['trainer']?.contains(session.trainerName) ??
+                      false;
+              final isCategoryMatch = filterData['training_type']!.isEmpty
+                  ? true
+                  : filterData['training_type']?.contains(session.category) ??
+                      false;
+
+              return isLocationMatch && isTrainerMatch && isCategoryMatch;
+            }).toList();
+          }
+
           emit(LoadedTraningState());
         } catch (error, stackTrace) {
           const String errorMsg =
@@ -31,6 +90,8 @@ class TrainingBloc extends Bloc<TrainingEvent, TrainingState> {
             errorMsg: errorMsg,
             stackTrace: stackTrace,
           );
+
+          emit(ErrorTraningState());
         }
       },
     );
@@ -52,7 +113,23 @@ class TrainingBloc extends Bloc<TrainingEvent, TrainingState> {
   }
 }
 
-// isFeatured
-           // sessions.where((session) => session.isFeatured).toList();
+
           
           // sessions.where((session) => session.category == category).toList();
+
+          // Future<List<TrainingSessionModel>> getAllSessions() async {
+  //   return await _fetchSessions();
+  // }
+
+  // Future<List<TrainingSessionModel>> getFeaturedSessions() async {
+  //   final sessions = await _fetchSessions();
+  //   return sessions.where((session) => session.isFeatured).toList();
+  // }
+
+  // Future<List<TrainingSessionModel>> getSessionsByCategory(String category) async {
+  //   final sessions = await _fetchSessions();
+  //   return sessions.where((session) => session.category == category).toList();
+  // }
+
+  // all training page 
+  // training details page
