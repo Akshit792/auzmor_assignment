@@ -33,34 +33,56 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
 
         return Scaffold(
           backgroundColor: Colors.grey[200],
-          body: (state is LoadingTrainingsState)
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.red,
-                  ),
-                )
-              : Column(
-                  children: [
-                    if (state is LoadedTrainingsState)
-                      buildHighLightedTrainingsCarousel(
-                        trainingsBloc: trainingsBloc,
-                      ),
-                    Flexible(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(15),
-                        itemCount: trainingsBloc.trainingsList.length,
-                        itemBuilder: (context, index) {
-                          return buildTrainingDetailsCard(
-                            trainingsBloc: trainingsBloc,
-                            trainingData: trainingsBloc.trainingsList[index],
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+          body: buildBody(
+            state: state,
+            trainingsBloc: trainingsBloc,
+          ),
         );
       },
+    );
+  }
+
+  Widget buildBody({
+    required TrainingsState state,
+    required TrainingsBloc trainingsBloc,
+  }) {
+    if (state is LoadingTrainingsState) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Colors.red,
+        ),
+      );
+    }
+
+    if (state is ErrorTrainingsState) {
+      return const Center(
+          child: Text(
+        "An Error Occurred....",
+      ));
+    }
+
+    return Column(
+      children: [
+        buildHighLightedTrainingsCarousel(
+          trainingsBloc: trainingsBloc,
+        ),
+        (trainingsBloc.trainingsList.isEmpty)
+            ? const Text(
+                "No Data Found.....",
+              )
+            : Flexible(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(15),
+                  itemCount: trainingsBloc.trainingsList.length,
+                  itemBuilder: (context, index) {
+                    return buildTrainingDetailsCard(
+                      trainingsBloc: trainingsBloc,
+                      trainingData: trainingsBloc.trainingsList[index],
+                    );
+                  },
+                ),
+              ),
+      ],
     );
   }
 
@@ -181,6 +203,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                     children: [
                                       Text(
                                         trainingData.name,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                         style: const TextStyle(
                                           fontSize: 17,
                                           color: Colors.red,
@@ -197,6 +221,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                             startDate: trainingData.startDate,
                                             endDate: trainingData.endDate,
                                           )}"),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.white,
@@ -400,6 +426,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                       ),
                       child: Text(
                         trainingDateRange,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                         ),
@@ -407,6 +435,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     ),
                     Text(
                       trainingData.time,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -415,6 +445,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     const Spacer(),
                     Text(
                       trainingData.address,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -438,6 +470,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                   children: [
                     Text(
                       trainingData.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -470,6 +504,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                             children: [
                               const Text(
                                 ("Session Trainer"),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
@@ -477,6 +513,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                               ),
                               Text(
                                 trainingData.trainerName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,

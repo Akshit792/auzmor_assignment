@@ -52,6 +52,8 @@ class _TrainingDetailsScreenState extends State<TrainingDetailsScreen> {
                     color: Colors.black54,
                     child: Text(
                       trainingData.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: const TextStyle(
                         fontSize: 24,
                         color: Colors.white,
@@ -75,24 +77,30 @@ class _TrainingDetailsScreenState extends State<TrainingDetailsScreen> {
                   const SizedBox(
                     width: 16,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        trainingData.trainerName,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          trainingData.trainerName,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        trainingData.category,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
+                        Text(
+                          trainingData.category,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -100,34 +108,36 @@ class _TrainingDetailsScreenState extends State<TrainingDetailsScreen> {
             const Divider(),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildDetailRow(
-                    label: ("Location"),
-                    value: trainingData.location,
-                  ),
-                  buildDetailRow(
-                    label: ("Start Date"),
-                    value: trainingData.startDate,
-                  ),
-                  buildDetailRow(
-                    label: ("End Date"),
-                    value: trainingData.endDate,
-                  ),
-                  buildDetailRow(
-                    label: ("Time"),
-                    value: trainingData.time,
-                  ),
-                  buildDetailRow(
-                    label: ("Address"),
-                    value: trainingData.address,
-                  ),
-                  buildDetailRow(
-                    label: ("Price"),
-                    value: ("\$${trainingData.price}"),
-                  ),
-                ],
+              child: Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildDetailRow(
+                      label: ("Location"),
+                      value: trainingData.location,
+                    ),
+                    buildDetailRow(
+                      label: ("Start Date"),
+                      value: trainingData.startDate,
+                    ),
+                    buildDetailRow(
+                      label: ("End Date"),
+                      value: trainingData.endDate,
+                    ),
+                    buildDetailRow(
+                      label: ("Time"),
+                      value: trainingData.time,
+                    ),
+                    buildDetailRow(
+                      label: ("Address"),
+                      value: trainingData.address,
+                    ),
+                    buildDetailRow(
+                      label: ("Price"),
+                      value: ("\$${trainingData.price}"),
+                    ),
+                  ],
+                ),
               ),
             ),
             const Divider(),
@@ -182,11 +192,15 @@ class _TrainingDetailsScreenState extends State<TrainingDetailsScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+          Flexible(
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
             ),
           ),
         ],
