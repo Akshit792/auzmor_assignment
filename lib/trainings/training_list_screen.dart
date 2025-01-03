@@ -69,6 +69,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
   }) {
     final double height = MediaQuery.of(context).size.height;
 
+    final bool isFilterApplied =
+        trainingsBloc.filterSettings.values.any((list) => list.isNotEmpty);
+
     return Container(
       height: (height * 0.49),
       color: Colors.red,
@@ -311,7 +314,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                               ),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Colors.grey[500]!,
+                                  color: (isFilterApplied
+                                      ? Colors.red
+                                      : Colors.grey[500]!),
                                   width: 1.1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -322,7 +327,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                   Icon(
                                     Icons.filter_list,
                                     size: 16,
-                                    color: Colors.grey[500],
+                                    color: (isFilterApplied
+                                        ? Colors.red
+                                        : Colors.grey[500]),
                                   ),
                                   const SizedBox(
                                     width: 5,
@@ -330,7 +337,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                   Text(
                                     ("Fitler"),
                                     style: TextStyle(
-                                      color: Colors.grey[500],
+                                      color: (isFilterApplied
+                                          ? Colors.red
+                                          : Colors.grey[500]),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
