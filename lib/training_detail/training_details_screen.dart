@@ -108,36 +108,34 @@ class _TrainingDetailsScreenState extends State<TrainingDetailsScreen> {
             const Divider(),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildDetailRow(
-                      label: ("Location"),
-                      value: trainingData.location,
-                    ),
-                    buildDetailRow(
-                      label: ("Start Date"),
-                      value: trainingData.startDate,
-                    ),
-                    buildDetailRow(
-                      label: ("End Date"),
-                      value: trainingData.endDate,
-                    ),
-                    buildDetailRow(
-                      label: ("Time"),
-                      value: trainingData.time,
-                    ),
-                    buildDetailRow(
-                      label: ("Address"),
-                      value: trainingData.address,
-                    ),
-                    buildDetailRow(
-                      label: ("Price"),
-                      value: ("\$${trainingData.price}"),
-                    ),
-                  ],
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDetailRow(
+                    label: ("Location"),
+                    value: trainingData.location,
+                  ),
+                  buildDetailRow(
+                    label: ("Start Date"),
+                    value: trainingData.startDate,
+                  ),
+                  buildDetailRow(
+                    label: ("End Date"),
+                    value: trainingData.endDate,
+                  ),
+                  buildDetailRow(
+                    label: ("Time"),
+                    value: trainingData.time,
+                  ),
+                  buildDetailRow(
+                    label: ("Address"),
+                    value: trainingData.address,
+                  ),
+                  buildDetailRow(
+                    label: ("Price"),
+                    value: ("\$${trainingData.price}"),
+                  ),
+                ],
               ),
             ),
             const Divider(),
