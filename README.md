@@ -45,7 +45,6 @@ Follow these steps to run the project on your computer:
      flutter build ios   # For iOS
      ```
 
-
 ---
 
 If you face any issues, make sure Flutter is installed correctly and your device is set up. You can find more help in the [Flutter Documentation](https://flutter.dev/docs).
