@@ -1,9 +1,9 @@
-class TrainingState {}
+abstract class TrainingsState {}
 
-class InitialTraningState extends TrainingState {}
+class InitialTrainingsState extends TrainingsState {}
 
-class LoadingTraningState extends TrainingState {}
+class LoadingTrainingsState extends TrainingsState {}
 
-class LoadedTraningState extends TrainingState {}
+class LoadedTrainingsState extends TrainingsState {}
 
-class ErrorTraningState extends TrainingState {}
+class ErrorTrainingsState extends TrainingsState {}

@@ -1,5 +1,5 @@
 import 'package:auzmor_assignment/common/config/constants.dart';
-import 'package:auzmor_assignment/common/models/training_session_model.dart';
+import 'package:auzmor_assignment/common/models/training_model.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_bloc.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_event.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_state.dart';
@@ -18,20 +18,20 @@ class TrainingListScreen extends StatefulWidget {
 class _TrainingListScreenState extends State<TrainingListScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TrainingBloc, TrainingState>(
+    return BlocBuilder<TrainingsBloc, TrainingsState>(
       builder: (context, state) {
-        final TrainingBloc trainingBloc =
-            BlocProvider.of<TrainingBloc>(context);
+        final TrainingsBloc trainingsBloc =
+            BlocProvider.of<TrainingsBloc>(context);
 
-        if (state is InitialTraningState) {
-          fetchTrainingSessionsData(
-            trainingBloc: trainingBloc,
+        if (state is InitialTrainingsState) {
+          fetchTrainingsData(
+            trainingsBloc: trainingsBloc,
           );
         }
 
         return Scaffold(
           backgroundColor: Colors.grey[200],
-          body: (state is LoadingTraningState)
+          body: (state is LoadingTrainingsState)
               ? const Center(
                   child: CircularProgressIndicator(
                     color: Colors.red,
@@ -39,18 +39,18 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                 )
               : Column(
                   children: [
-                    if (state is LoadedTraningState)
-                      _buildHighLightsTrainingCarousel(
-                          trainingBloc: trainingBloc),
+                    if (state is LoadedTrainingsState)
+                      buildHighLightedTrainingsCarousel(
+                        trainingsBloc: trainingsBloc,
+                      ),
                     Flexible(
                       child: ListView.builder(
                         padding: const EdgeInsets.all(15),
-                        itemCount: trainingBloc.trainingSessionsDataList.length,
+                        itemCount: trainingsBloc.trainingsList.length,
                         itemBuilder: (context, index) {
-                          return _buildTrainingSessionCard(
-                            trainingBloc: trainingBloc,
-                            trainingSessionData:
-                                trainingBloc.trainingSessionsDataList[index],
+                          return buildTrainingDetailsCard(
+                            trainingsBloc: trainingsBloc,
+                            trainingData: trainingsBloc.trainingsList[index],
                           );
                         },
                       ),
@@ -62,21 +62,20 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
     );
   }
 
-  Widget _buildHighLightsTrainingCarousel({
-    required TrainingBloc trainingBloc,
+  Widget buildHighLightedTrainingsCarousel({
+    required TrainingsBloc trainingsBloc,
   }) {
     final double height = MediaQuery.of(context).size.height;
 
     return Container(
+      height: (height * 0.49),
       color: Colors.red,
-      height: height * 0.49,
       child: Stack(
         children: [
-          // Background
           Column(
             children: [
               Container(
-                height: height * 0.3,
+                height: (height * 0.3),
                 color: Colors.red,
               ),
               Expanded(
@@ -90,10 +89,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
               ),
             ],
           ),
-          // Top Content
           Padding(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 10,
+              top: (MediaQuery.of(context).padding.top + 10),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +101,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     left: 20,
                   ),
                   child: Text(
-                    "Trainings",
+                    ("Trainings"),
                     style: TextStyle(
                       fontSize: 25,
                       color: Colors.white,
@@ -118,7 +116,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     bottom: 15,
                   ),
                   child: Text(
-                    "HighLights",
+                    ("HighLights"),
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.white,
@@ -128,18 +126,18 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                 ),
                 CarouselSlider(
                   options: CarouselOptions(
-                    height: height * 0.19,
+                    height: (height * 0.19),
                     enlargeCenterPage: true,
                     enlargeStrategy: CenterPageEnlargeStrategy.zoom,
                   ),
-                  items: trainingBloc.highlightedTrainingSessionList.map(
+                  items: trainingsBloc.highlightedTrainingsList.map(
                     (trainingSessionsData) {
                       return Builder(
                         builder: (BuildContext context) {
                           return Container(
                             width: MediaQuery.of(context).size.width,
                             margin: const EdgeInsets.symmetric(
-                              horizontal: 5.0,
+                              horizontal: 5,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.grey[100],
@@ -176,8 +174,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                         trainingSessionsData.name,
                                         style: const TextStyle(
                                           fontSize: 17,
-                                          fontWeight: FontWeight.w800,
                                           color: Colors.red,
+                                          fontWeight: FontWeight.w800,
                                         ),
                                       ),
                                       Padding(
@@ -186,16 +184,16 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                           bottom: 2,
                                         ),
                                         child: Text(
-                                          "${trainingSessionsData.address} ${trainingBloc.formatDateRange(
+                                          ("${trainingSessionsData.address} ${trainingsBloc.formatDateRange(
                                             startDate:
                                                 trainingSessionsData.startDate,
                                             endDate:
                                                 trainingSessionsData.endDate,
-                                          )}",
+                                          )}"),
                                           style: const TextStyle(
                                             fontSize: 12,
-                                            fontWeight: FontWeight.w700,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                         ),
                                       ),
@@ -209,7 +207,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                               bottom: 12,
                                             ),
                                             child: Text(
-                                              "\$${trainingSessionsData.price}",
+                                              ("\$${trainingSessionsData.price}"),
                                               style: const TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w800,
@@ -220,7 +218,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                           const Row(
                                             children: [
                                               Text(
-                                                "View Details",
+                                                ("View Details"),
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.white,
@@ -248,7 +246,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                   color: Colors.transparent,
                                   child: InkWell(
                                     onTap: () {
-                                      // move to details page
+                                      //TODO:
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width,
@@ -284,8 +282,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                           ),
                           child: InkWell(
                             onTap: () {
-                              _showFilterBottomSheet(
-                                  trainingBloc: trainingBloc);
+                              showFiltersBottomSheet(
+                                trainingsBloc: trainingsBloc,
+                              );
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -311,7 +310,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                     width: 5,
                                   ),
                                   Text(
-                                    "Fitler",
+                                    ("Fitler"),
                                     style: TextStyle(
                                       color: Colors.grey[500],
                                       fontWeight: FontWeight.w500,
@@ -334,15 +333,15 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
     );
   }
 
-  Widget _buildTrainingSessionCard({
-    required TrainingBloc trainingBloc,
-    required TrainingSessionModel trainingSessionData,
+  Widget buildTrainingDetailsCard({
+    required TrainingsBloc trainingsBloc,
+    required TrainingModel trainingData,
   }) {
     final double width = MediaQuery.of(context).size.width;
 
-    final String sessionDateRange = trainingBloc.formatDateRange(
-      startDate: trainingSessionData.startDate,
-      endDate: trainingSessionData.endDate,
+    final String trainingDateRange = trainingsBloc.formatDateRange(
+      startDate: trainingData.startDate,
+      endDate: trainingData.endDate,
     );
 
     return Padding(
@@ -364,7 +363,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
           child: Row(
             children: [
               SizedBox(
-                width: width * 0.25,
+                width: (width * 0.25),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -373,14 +372,14 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                         bottom: 10,
                       ),
                       child: Text(
-                        sessionDateRange,
+                        trainingDateRange,
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                     Text(
-                      trainingSessionData.time,
+                      trainingData.time,
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -388,7 +387,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      trainingSessionData.address,
+                      trainingData.address,
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -399,7 +398,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 15.0,
+                  horizontal: 15,
                 ),
                 child: DottedLine(
                   direction: Axis.vertical,
@@ -411,7 +410,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      trainingSessionData.name,
+                      trainingData.name,
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -419,7 +418,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                        top: 10.0,
+                        top: 10,
                       ),
                       child: Row(
                         children: [
@@ -430,25 +429,27 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                               shape: BoxShape.circle,
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  trainingSessionData.trainerImageUrl,
+                                  trainingData.trainerImageUrl,
                                 ),
                                 fit: BoxFit.cover,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                "Session Trainer",
+                                ("Session Trainer"),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               Text(
-                                trainingSessionData.trainerName,
+                                trainingData.trainerName,
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
@@ -469,7 +470,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                           // Navigate to next screen
                         },
                         child: const Text(
-                          "Enroll Now",
+                          ("Enroll Now"),
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white,
@@ -488,8 +489,8 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
     );
   }
 
-  void _showFilterBottomSheet({
-    required TrainingBloc trainingBloc,
+  void showFiltersBottomSheet({
+    required TrainingsBloc trainingsBloc,
   }) {
     String selectedFilter = ("Trainer");
 
@@ -503,27 +504,30 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRadius,
+      ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, changeState) {
-            final List<String> filterData = (selectedFilter == "Trainer")
-                ? trainingBloc.trainerNames
+            final List<String> filterOptions = (selectedFilter == "Trainer")
+                ? trainingsBloc.trainersList
                 : (selectedFilter == "Location")
-                    ? trainingBloc.locations
-                    : trainingBloc.trainingCategory;
+                    ? trainingsBloc.locationsList
+                    : trainingsBloc.trainingTypesList;
 
             final double width = MediaQuery.of(context).size.width;
 
             return Container(
               width: width,
-              decoration: BoxDecoration(borderRadius: borderRadius),
+              decoration: BoxDecoration(
+                borderRadius: borderRadius,
+              ),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Top Bar
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: Row(
@@ -550,7 +554,6 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                           ],
                         ),
                       ),
-                      // Filter Types
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -570,20 +573,18 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                               ),
                             ],
                           ),
-                          // Filter Data
                           Flexible(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: filterData.map(
+                              children: filterOptions.map(
                                 (value) {
                                   final String filterKey = selectedFilter
                                       .toLowerCase()
                                       .replaceAll(' ', '_');
 
-                                  final bool isSelected = trainingBloc
-                                          .filterData[filterKey]
-                                          .contains(value) ??
-                                      false;
+                                  final bool isSelected = trainingsBloc
+                                      .filterSettings[filterKey]!
+                                      .contains(value);
 
                                   return buildFilterOptions(
                                     label: value,
@@ -591,16 +592,17 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                     filterType: selectedFilter,
                                     onChanged: (newValue) {
                                       if (newValue == true) {
-                                        if (!trainingBloc.filterData[filterKey]
+                                        if (!trainingsBloc
+                                            .filterSettings[filterKey]!
                                             .contains(value)) {
-                                          trainingBloc.filterData[filterKey]
+                                          trainingsBloc
+                                              .filterSettings[filterKey]!
                                               .add(value);
                                         }
                                       } else {
-                                        trainingBloc.filterData[filterKey]
+                                        trainingsBloc.filterSettings[filterKey]!
                                             .remove(value);
                                       }
-
                                       changeState(() {});
                                     },
                                   );
@@ -610,7 +612,6 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                           ),
                         ],
                       ),
-                      // Apply Filter Button
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 20,
@@ -619,20 +620,19 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                           bottom: 25,
                         ),
                         child: MaterialButton(
+                          color: Colors.red,
+                          minWidth: double.infinity,
                           padding: const EdgeInsets.symmetric(
                             vertical: 10,
                           ),
-                          color: Colors.red,
-                          minWidth: double.infinity,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                           onPressed: () {
-                            fetchTrainingSessionsData(
+                            fetchTrainingsData(
                               isFilter: true,
-                              trainingBloc: trainingBloc,
+                              trainingsBloc: trainingsBloc,
                             );
-
                             Navigator.of(context).pop();
                           },
                           child: const Text(
@@ -683,7 +683,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                   label,
                   style: TextStyle(
                     fontSize: 16,
-                    color: (isSeleted ? Colors.black : Colors.black),
+                    color: Colors.black,
                     fontWeight: (isSeleted ? FontWeight.w600 : FontWeight.w400),
                   ),
                 ),
@@ -696,9 +696,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
   }
 
   Widget buildFilterOptions({
-    required String filterType,
     required String label,
     required bool isSelected,
+    required String filterType,
     required void Function(bool?) onChanged,
   }) {
     return Container(
@@ -715,17 +715,17 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
           Checkbox(
             value: isSelected,
             onChanged: onChanged,
-            activeColor: Colors.red,
-            checkColor: Colors.white,
             side: const BorderSide(
               color: Colors.grey,
             ),
+            activeColor: Colors.red,
+            checkColor: Colors.white,
           ),
           Flexible(
             child: Text(
               label,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14,
               ),
             ),
           ),
@@ -734,12 +734,12 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
     );
   }
 
-  void fetchTrainingSessionsData({
+  void fetchTrainingsData({
     bool isFilter = false,
-    required TrainingBloc trainingBloc,
+    required TrainingsBloc trainingsBloc,
   }) {
-    trainingBloc.add(
-      FetchTrainingSessionData(
+    trainingsBloc.add(
+      FetchTrainingsDataEvent(
         context: context,
         isFilter: isFilter,
       ),

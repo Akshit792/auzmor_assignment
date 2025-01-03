@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 
-class TrainingEvent {}
+abstract class TrainingsEvent {}
 
-class FetchTrainingSessionData extends TrainingEvent {
-  final BuildContext context;
+class FetchTrainingsDataEvent extends TrainingsEvent {
   final bool isFilter;
+  final BuildContext context;
 
-  FetchTrainingSessionData({
-    required this.context,
+  FetchTrainingsDataEvent({
     this.isFilter = false,
+    required this.context,
   });
 }

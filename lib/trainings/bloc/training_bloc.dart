@@ -1,100 +1,104 @@
 import 'package:auzmor_assignment/common/config/log_print.dart';
-import 'package:auzmor_assignment/common/models/training_session_model.dart';
+import 'package:auzmor_assignment/common/models/training_model.dart';
 import 'package:auzmor_assignment/common/repositories/training_repository.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_event.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-class TrainingBloc extends Bloc<TrainingEvent, TrainingState> {
-  List<TrainingSessionModel> trainingSessionsDataList = [];
+class TrainingsBloc extends Bloc<TrainingsEvent, TrainingsState> {
+  List<TrainingModel> trainingsList = [];
 
-  List<TrainingSessionModel> highlightedTrainingSessionList = [];
+  List<TrainingModel> highlightedTrainingsList = [];
 
-  final List<String> trainerNames = [
+  final List<String> trainersList = [
+    "Anna Lee",
+    "Laura Simmons",
     "Mark Hamilton",
     "Sarah Johnson",
-    "Anna Lee",
     "Michael Rodriguez",
-    "Laura Simmons",
   ];
 
-  final List<String> trainingCategory = [
+  final List<String> trainingTypesList = [
     "Leadership",
-    "Human Resources",
-    "Project Management",
     "Communication",
     "Team Management",
+    "Human Resources",
+    "Project Management",
   ];
 
-  final List<String> locations = [
-    "New York, ZK",
+  final List<String> locationsList = [
     "Chicago, IL",
-    "Phoenix, AZ",
-    "San Francisco, CA",
     "Dallas, TX",
-    "West Des Moines",
-    "San Diego, CA",
     "Boston, MA",
+    "Phoenix, AZ",
     "Houston, TX",
+    "New York, ZK",
+    "San Diego, CA",
+    "West Des Moines",
+    "San Francisco, CA",
   ];
 
-  final Map filterData = {
-    "location": [],
-    "trainer": [],
-    "training_type": [],
+  final Map<String, List<dynamic>> filterSettings = {
+    "trainers": [],
+    "locations": [],
+    "training_types": [],
   };
 
-  TrainingBloc() : super(InitialTraningState()) {
-    on<FetchTrainingSessionData>(
+  TrainingsBloc() : super(InitialTrainingsState()) {
+    on<FetchTrainingsDataEvent>(
       (event, emit) async {
         try {
-          emit(LoadingTraningState());
+          emit(LoadingTrainingsState());
 
-          final trainingRepository = RepositoryProvider.of<TrainingRepository>(
-            event.context,
-          );
+          final trainingRepository =
+              RepositoryProvider.of<TrainingRepository>(event.context);
 
-          trainingSessionsDataList = await trainingRepository.fetchSessions();
+          trainingsList = await trainingRepository.fetchSessions();
 
-          highlightedTrainingSessionList = trainingSessionsDataList
-              .where((session) => session.isFeatured)
-              .toList();
+          _setHighlightedTrainings();
 
           if (event.isFilter) {
-            trainingSessionsDataList =
-                trainingSessionsDataList.where((session) {
-              final isLocationMatch = filterData['location']!.isEmpty
-                  ? true
-                  : filterData['location']?.contains(session.location) ?? false;
-              final isTrainerMatch = filterData['trainer']!.isEmpty
-                  ? true
-                  : filterData['trainer']?.contains(session.trainerName) ??
-                      false;
-              final isCategoryMatch = filterData['training_type']!.isEmpty
-                  ? true
-                  : filterData['training_type']?.contains(session.category) ??
-                      false;
-
-              return isLocationMatch && isTrainerMatch && isCategoryMatch;
-            }).toList();
+            _filterTrainingsData();
           }
 
-          emit(LoadedTraningState());
-        } catch (error, stackTrace) {
-          const String errorMsg =
-              ("Failed to fetch training session data : Fetch Training Session Data Event");
-
+          emit(LoadedTrainingsState());
+        } catch (e, s) {
           LogPrint().error(
-            error: error,
-            errorMsg: errorMsg,
-            stackTrace: stackTrace,
+            error: e,
+            stackTrace: s,
+            errorMsg: "Failed to fetch trainings data",
           );
 
-          emit(ErrorTraningState());
+          emit(ErrorTrainingsState());
         }
       },
     );
+  }
+
+  void _setHighlightedTrainings() {
+    highlightedTrainingsList =
+        trainingsList.where((data) => data.isFeatured).toList();
+  }
+
+  void _filterTrainingsData() {
+    trainingsList = trainingsList.where(
+      (data) {
+        final bool isLocationMatch = filterSettings["locations"]!.isEmpty
+            ? true
+            : filterSettings["locations"]!.contains(data.location);
+
+        final bool isTrainerMatch = filterSettings["trainers"]!.isEmpty
+            ? true
+            : filterSettings["trainers"]!.contains(data.trainerName);
+
+        final bool isCategoryMatch = filterSettings["training_types"]!.isEmpty
+            ? true
+            : filterSettings["training_types"]!.contains(data.category);
+
+        return (isLocationMatch && isTrainerMatch && isCategoryMatch);
+      },
+    ).toList();
   }
 
   String formatDateRange({
@@ -102,34 +106,13 @@ class TrainingBloc extends Bloc<TrainingEvent, TrainingState> {
     required String endDate,
   }) {
     final String startFormatted =
-        DateFormat('MMM dd').format(DateTime.parse(startDate));
+        DateFormat("MMM dd").format(DateTime.parse(startDate));
 
     final String endFormatted =
-        DateFormat('dd yyyy').format(DateTime.parse(endDate));
+        DateFormat("dd yyyy").format(DateTime.parse(endDate));
 
-    final String formattedDateRange = "$startFormatted - $endFormatted";
+    final String formattedDateRange = ("$startFormatted - $endFormatted");
 
     return formattedDateRange;
   }
 }
-
-
-          
-          // sessions.where((session) => session.category == category).toList();
-
-          // Future<List<TrainingSessionModel>> getAllSessions() async {
-  //   return await _fetchSessions();
-  // }
-
-  // Future<List<TrainingSessionModel>> getFeaturedSessions() async {
-  //   final sessions = await _fetchSessions();
-  //   return sessions.where((session) => session.isFeatured).toList();
-  // }
-
-  // Future<List<TrainingSessionModel>> getSessionsByCategory(String category) async {
-  //   final sessions = await _fetchSessions();
-  //   return sessions.where((session) => session.category == category).toList();
-  // }
-
-  // all training page 
-  // training details page

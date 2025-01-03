@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'training_session_model.g.dart';
+part 'training_model.g.dart';
 
 @JsonSerializable()
-class TrainingSessionModel {
+class TrainingModel {
   @JsonKey(name: "id")
   final int id;
 
@@ -46,7 +46,7 @@ class TrainingSessionModel {
   @JsonKey(name: "price")
   final int price;
 
-  TrainingSessionModel({
+  TrainingModel({
     required this.id,
     required this.name,
     required this.location,
@@ -63,8 +63,8 @@ class TrainingSessionModel {
     required this.price,
   });
 
-  factory TrainingSessionModel.fromJson(Map<String, dynamic> json) =>
-      _$TrainingSessionModelFromJson(json);
+  factory TrainingModel.fromJson(Map<String, dynamic> json) =>
+      _$TrainingModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TrainingSessionModelToJson(this);
+  Map<String, dynamic> toJson() => _$TrainingModelToJson(this);
 }

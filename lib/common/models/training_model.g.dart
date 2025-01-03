@@ -1,14 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'training_session_model.dart';
+part of 'training_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TrainingSessionModel _$TrainingSessionModelFromJson(
-        Map<String, dynamic> json) =>
-    TrainingSessionModel(
+TrainingModel _$TrainingModelFromJson(Map<String, dynamic> json) =>
+    TrainingModel(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       location: json['location'] as String,
@@ -22,11 +21,10 @@ TrainingSessionModel _$TrainingSessionModelFromJson(
       category: json['category'] as String,
       isFeatured: json['is_featured'] as bool,
       address: json['address'] as String,
-      price: json['price'] as int,
+      price: (json['price'] as num).toInt(),
     );
 
-Map<String, dynamic> _$TrainingSessionModelToJson(
-        TrainingSessionModel instance) =>
+Map<String, dynamic> _$TrainingModelToJson(TrainingModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
