@@ -1,16 +1,51 @@
 # auzmor_assignment
 
-A new Flutter project.
+This is a new Flutter project.
 
-## Getting Started
+## How to Run the Project
 
-This project is a starting point for a Flutter application.
+Follow these steps to run the project on your computer:
 
-A few resources to get you started if this is your first Flutter project:
+### 1. Clone the Repository
+   - First, copy the project to your computer by using this command:
+     ```bash
+     git clone https://github.com/your-username/auzmor_assignment.git
+     ```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 2. Install Flutter
+   - If you don’t have Flutter installed, follow this guide to install it: [Flutter installation](https://flutter.dev/docs/get-started/install).
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 3. Open the Project
+   - After installing Flutter, open the project folder in your terminal:
+     ```bash
+     cd auzmor_assignment
+     ```
+
+### 4. Install Dependencies
+   - Install the required libraries by running this command:
+     ```bash
+     flutter pub get
+     ```
+
+### 5. Set Up a Device
+   - Make sure you have an Android or iOS device set up:
+     - **For Android:** Open an Android emulator or connect an Android phone to your computer.
+     - **For iOS:** Use an iOS simulator or connect an iPhone.
+
+### 6. Run the App
+   - Now, you can run the project on your device by using:
+     ```bash
+     flutter run
+     ```
+
+### 7. Build for Release (Optional)
+   - If you want to build the app for release (to install it on your phone or upload it to the store), you can run:
+     ```bash
+     flutter build apk   # For Android
+     flutter build ios   # For iOS
+     ```
+
+
+---
+
+If you face any issues, make sure Flutter is installed correctly and your device is set up. You can find more help in the [Flutter Documentation](https://flutter.dev/docs).
