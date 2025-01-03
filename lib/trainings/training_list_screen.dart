@@ -1,5 +1,7 @@
 import 'package:auzmor_assignment/common/config/constants.dart';
 import 'package:auzmor_assignment/common/models/training_model.dart';
+import 'package:auzmor_assignment/training_detail/bloc/training_details_bloc.dart';
+import 'package:auzmor_assignment/training_detail/training_details_screen.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_bloc.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_event.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_state.dart';
@@ -131,7 +133,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                     enlargeStrategy: CenterPageEnlargeStrategy.zoom,
                   ),
                   items: trainingsBloc.highlightedTrainingsList.map(
-                    (trainingSessionsData) {
+                    (trainingData) {
                       return Builder(
                         builder: (BuildContext context) {
                           return Container(
@@ -152,7 +154,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                     child: FadeInImage.assetNetwork(
                                       placeholder:
                                           AppConstants.kPlaceHolderImagePath,
-                                      image: trainingSessionsData.imageUrl,
+                                      image: trainingData.imageUrl,
                                       fit: BoxFit.cover,
                                       fadeInDuration: const Duration(
                                         milliseconds: 300,
@@ -165,13 +167,17 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 15,
                                   ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        trainingSessionsData.name,
+                                        trainingData.name,
                                         style: const TextStyle(
                                           fontSize: 17,
                                           color: Colors.red,
@@ -184,11 +190,9 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                           bottom: 2,
                                         ),
                                         child: Text(
-                                          ("${trainingSessionsData.address} ${trainingsBloc.formatDateRange(
-                                            startDate:
-                                                trainingSessionsData.startDate,
-                                            endDate:
-                                                trainingSessionsData.endDate,
+                                          ("${trainingData.address} ${trainingsBloc.formatDateRange(
+                                            startDate: trainingData.startDate,
+                                            endDate: trainingData.endDate,
                                           )}"),
                                           style: const TextStyle(
                                             fontSize: 12,
@@ -207,7 +211,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                               bottom: 12,
                                             ),
                                             child: Text(
-                                              ("\$${trainingSessionsData.price}"),
+                                              ("\$${trainingData.price}"),
                                               style: const TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w800,
@@ -246,7 +250,21 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                   color: Colors.transparent,
                                   child: InkWell(
                                     onTap: () {
-                                      // TODO:
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return BlocProvider(
+                                              create: (context) =>
+                                                  TrainingDetailsBloc(
+                                                trainingData: trainingData,
+                                              ),
+                                              child:
+                                                  const TrainingDetailsScreen(),
+                                            );
+                                          },
+                                        ),
+                                      );
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width,
@@ -467,7 +485,19 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                         elevation: 1,
                         color: Colors.red,
                         onPressed: () {
-                          // TODO:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return BlocProvider(
+                                  create: (context) => TrainingDetailsBloc(
+                                    trainingData: trainingData,
+                                  ),
+                                  child: const TrainingDetailsScreen(),
+                                );
+                              },
+                            ),
+                          );
                         },
                         child: const Text(
                           ("Enroll Now"),
