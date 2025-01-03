@@ -1,4 +1,4 @@
-# auzmor_assignment
+# Auzmor Assignment
 
 This is a new Flutter project.
 
@@ -45,6 +45,12 @@ Follow these steps to run the project on your computer:
      flutter build ios   # For iOS
      ```
 
+### APK Download Link
+
+You can download the APK directly from this link:
+[Download APK](https://drive.google.com/file/d/1adho2GVC1LlcYXwuB7xIImMnTlUHSvxo/view?usp=sharing)
+
 ---
 
 If you face any issues, make sure Flutter is installed correctly and your device is set up. You can find more help in the [Flutter Documentation](https://flutter.dev/docs).
+
