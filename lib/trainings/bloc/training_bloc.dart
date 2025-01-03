@@ -1,6 +1,6 @@
 import 'package:auzmor_assignment/common/config/log_print.dart';
 import 'package:auzmor_assignment/common/models/training_model.dart';
-import 'package:auzmor_assignment/common/repositories/training_repository.dart';
+import 'package:auzmor_assignment/common/repositories/trainings_repository.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_event.dart';
 import 'package:auzmor_assignment/trainings/bloc/training_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,9 +40,9 @@ class TrainingsBloc extends Bloc<TrainingsEvent, TrainingsState> {
   ];
 
   final Map<String, List<dynamic>> filterSettings = {
-    "trainers": [],
-    "locations": [],
-    "training_types": [],
+    "trainer": [],
+    "location": [],
+    "training_type": [],
   };
 
   TrainingsBloc() : super(InitialTrainingsState()) {
@@ -51,10 +51,10 @@ class TrainingsBloc extends Bloc<TrainingsEvent, TrainingsState> {
         try {
           emit(LoadingTrainingsState());
 
-          final trainingRepository =
-              RepositoryProvider.of<TrainingRepository>(event.context);
+          final trainingsRepository =
+              RepositoryProvider.of<TrainingsRepository>(event.context);
 
-          trainingsList = await trainingRepository.fetchSessions();
+          trainingsList = await trainingsRepository.fetchSessions();
 
           _setHighlightedTrainings();
 
@@ -84,17 +84,17 @@ class TrainingsBloc extends Bloc<TrainingsEvent, TrainingsState> {
   void _filterTrainingsData() {
     trainingsList = trainingsList.where(
       (data) {
-        final bool isLocationMatch = filterSettings["locations"]!.isEmpty
+        final bool isLocationMatch = filterSettings["location"]!.isEmpty
             ? true
-            : filterSettings["locations"]!.contains(data.location);
+            : filterSettings["location"]!.contains(data.location);
 
-        final bool isTrainerMatch = filterSettings["trainers"]!.isEmpty
+        final bool isTrainerMatch = filterSettings["trainer"]!.isEmpty
             ? true
-            : filterSettings["trainers"]!.contains(data.trainerName);
+            : filterSettings["trainer"]!.contains(data.trainerName);
 
-        final bool isCategoryMatch = filterSettings["training_types"]!.isEmpty
+        final bool isCategoryMatch = filterSettings["training_type"]!.isEmpty
             ? true
-            : filterSettings["training_types"]!.contains(data.category);
+            : filterSettings["training_type"]!.contains(data.category);
 
         return (isLocationMatch && isTrainerMatch && isCategoryMatch);
       },

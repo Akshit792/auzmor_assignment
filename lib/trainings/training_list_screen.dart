@@ -246,7 +246,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                                   color: Colors.transparent,
                                   child: InkWell(
                                     onTap: () {
-                                      //TODO:
+                                      // TODO:
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width,
@@ -467,7 +467,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                         elevation: 1,
                         color: Colors.red,
                         onPressed: () {
-                          // Navigate to next screen
+                          // TODO:
                         },
                         child: const Text(
                           ("Enroll Now"),
@@ -573,41 +573,45 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
                               ),
                             ],
                           ),
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: filterOptions.map(
-                                (value) {
-                                  final String filterKey = selectedFilter
-                                      .toLowerCase()
-                                      .replaceAll(' ', '_');
+                          SizedBox(
+                            height: 300,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: filterOptions.map(
+                                  (value) {
+                                    final String filterKey = selectedFilter
+                                        .toLowerCase()
+                                        .replaceAll(' ', '_');
 
-                                  final bool isSelected = trainingsBloc
-                                      .filterSettings[filterKey]!
-                                      .contains(value);
+                                    final bool isSelected = trainingsBloc
+                                        .filterSettings[filterKey]!
+                                        .contains(value);
 
-                                  return buildFilterOptions(
-                                    label: value,
-                                    isSelected: isSelected,
-                                    filterType: selectedFilter,
-                                    onChanged: (newValue) {
-                                      if (newValue == true) {
-                                        if (!trainingsBloc
-                                            .filterSettings[filterKey]!
-                                            .contains(value)) {
+                                    return buildFilterOptions(
+                                      label: value,
+                                      isSelected: isSelected,
+                                      filterType: selectedFilter,
+                                      onChanged: (newValue) {
+                                        if (newValue == true) {
+                                          if (!trainingsBloc
+                                              .filterSettings[filterKey]!
+                                              .contains(value)) {
+                                            trainingsBloc
+                                                .filterSettings[filterKey]!
+                                                .add(value);
+                                          }
+                                        } else {
                                           trainingsBloc
                                               .filterSettings[filterKey]!
-                                              .add(value);
+                                              .remove(value);
                                         }
-                                      } else {
-                                        trainingsBloc.filterSettings[filterKey]!
-                                            .remove(value);
-                                      }
-                                      changeState(() {});
-                                    },
-                                  );
-                                },
-                              ).toList(),
+                                        changeState(() {});
+                                      },
+                                    );
+                                  },
+                                ).toList(),
+                              ),
                             ),
                           ),
                         ],
@@ -724,8 +728,10 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
           Flexible(
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: (isSelected ? Colors.red : Colors.grey[700]),
               ),
             ),
           ),
