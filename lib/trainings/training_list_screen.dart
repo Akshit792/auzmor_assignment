@@ -507,6 +507,7 @@ class _TrainingListScreenState extends State<TrainingListScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
       ),
+      backgroundColor: Colors.white,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, changeState) {
